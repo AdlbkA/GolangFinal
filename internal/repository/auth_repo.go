@@ -5,6 +5,7 @@ import (
 	"errors"
 	_ "github.com/lib/pq"
 	"golang-auth-service/internal/db/models"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
@@ -24,7 +25,9 @@ func (r *AuthRepository) CreateUser(user *models.User) (*models.User, error) {
 		return nil, errors.New("user already exists")
 	}
 
-	_, err = r.DB.Exec("INSERT INTO users (username, password) VALUES ($1, $2)", user.Username, user.Password)
+	passwordBytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+
+	_, err = r.DB.Exec("INSERT INTO users (username, password) VALUES ($1, $2)", user.Username, passwordBytes)
 	if err != nil {
 		log.Printf("Failed to add user: %v", err)
 		return nil, err

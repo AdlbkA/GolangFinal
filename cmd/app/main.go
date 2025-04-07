@@ -1,32 +1,27 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
-	"golang-auth-service/internal/db"
-	"golang-auth-service/internal/handlers"
-	"golang-auth-service/internal/repository"
-	"golang-auth-service/internal/routes"
-	"log"
-	"net/http"
+	"flag"
+	"golang-auth-service/internal/app"
 )
 
+var (
+	envParse bool
+	envPath  string
+)
+
+func init() {
+	flag.BoolVar(&envParse, "env.parse", true, "Whether parse envs from file or not")
+	flag.StringVar(&envPath, "env.path", "internal/app/config/.env", "Path to env file")
+}
+
 func main() {
-	err := godotenv.Load("/Users/anuaradilbek/Desktop/GolangFinal/.env")
-	if err != nil {
-		log.Println("No .env file found")
+	flag.Parse()
+
+	files := make([]string, 0)
+	if envParse {
+		files = append(files, envPath)
 	}
 
-	db.InitDB()
-	defer db.CloseDB()
-
-	authRepo := &repository.AuthRepository{DB: db.DB}
-
-	authHandler := &handlers.AuthHandler{Repo: authRepo}
-
-	r := mux.NewRouter()
-
-	routes.RegisterRoutes(r, authHandler)
-
-	log.Fatal(http.ListenAndServe(":8080", r))
+	app.Run(files...)
 }

@@ -3,15 +3,17 @@ package auth
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"time"
+	"github.com/joho/godotenv"
+	"os"
 )
 
-var secretKey = []byte("028b929f3a3fb68a3ae09ff8ee0498c3f13f20977eb0ee7ed6f322eccbcf13a4")
+var err = godotenv.Load(".env")
+
+var secretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
 func CreateToken(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
-		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	tokenString, err := token.SignedString(secretKey)

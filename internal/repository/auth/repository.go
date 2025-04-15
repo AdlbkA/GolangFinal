@@ -7,5 +7,5 @@ import (
 
 type Repository interface {
 	CreateUser(ctx context.Context, user domain.User) (domain.UserResponse, error)
-	//LoginUser(ctx context.Context, user *domain.User) (domain.User, error)
+	LoginUser(ctx context.Context, user domain.User) (domain.UserResponse, error)
 }

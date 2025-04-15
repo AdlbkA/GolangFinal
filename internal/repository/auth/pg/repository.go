@@ -48,23 +48,20 @@ func (r *repository) CreateUser(ctx context.Context, user domain.User) (domain.U
 
 }
 
-//func (r *repository) LoginUser(ctx context.Context, user *domain.User) (domain.User, error) {
-//	rows, err := r.DB.Query("Select username, password from users where username = $1", user.Username)
-//	if err != nil {
-//		log.Printf("Failed to get user: %v", err)
-//		return domain.User{}, err
-//	}
-//
-//	defer rows.Close()
-//
-//	if !rows.Next() {
-//		return domain.User{}, errors.New("invalid username or password")
-//	}
-//
-//	for rows.Next() {
-//		rows.Scan(&user.Username, &user.Password)
-//	}
-//
-//	return user, nil
-//
-//}
+func (r *repository) LoginUser(ctx context.Context, user domain.User) (domain.UserResponse, error) {
+	req := domain.User{}
+	err := r.DB.Get(&req, "Select username, password, role from users where username = $1", user.Username)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(req.Password), []byte(user.Password))
+	if err != nil {
+		log.Println(err)
+		return domain.UserResponse{}, errors.New("invalid username or password")
+	}
+
+	res := domain.UserResponse{Username: req.Username, Role: req.Role}
+
+	return res, nil
+}

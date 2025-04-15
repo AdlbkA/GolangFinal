@@ -53,6 +53,30 @@ func (h *Handler) Register(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
+func (h *Handler) Login(c echo.Context) error {
+	ctx, cancel := h.context(c)
+
+	defer cancel()
+
+	jsonBody := make(map[string]interface{})
+	err := json.NewDecoder(c.Request().Body).Decode(&jsonBody)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return nil
+	}
+
+	resp, err := h.srv.LoginUser(ctx, reqresp.LoginUserRequest{Username: jsonBody["username"].(string), Password: jsonBody["password"].(string)})
+	if err != nil {
+		if err.Error() == "invalid username or password" {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"code":    http.StatusBadRequest,
+				"message": err.Error(),
+			})
+		}
+	}
+	return c.JSON(http.StatusOK, resp)
+}
+
 func (h *Handler) context(c echo.Context) (context.Context, context.CancelFunc) {
 	ctx := context.Background()
 

@@ -18,15 +18,12 @@ func NewPostgresRepository(db *sqlx.DB) auth.Repository {
 	return &repository{DB: db}
 }
 
-func (r *repository) CreateUser(ctx context.Context, user domain.User) (domain.User, error) {
-	res := domain.User{}
-	err := r.DB.Get(&res, "Select username from users where username=$1", user.Username)
-	if err != nil {
-		log.Println(err)
-	}
+func (r *repository) CreateUser(ctx context.Context, user domain.User) (domain.UserResponse, error) {
+	res := domain.UserResponse{}
+	_ = r.DB.Get(&res, "Select username, role from users where username=$1", user.Username)
 
-	if res != (domain.User{}) {
-		return domain.User{}, errors.New("user already exists")
+	if res != (domain.UserResponse{}) {
+		return domain.UserResponse{}, errors.New("user already exists")
 	}
 
 	passwordBytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -39,10 +36,13 @@ func (r *repository) CreateUser(ctx context.Context, user domain.User) (domain.U
 		})
 	if err != nil {
 		log.Printf("Failed to add user: %v", err)
-		return domain.User{}, err
+		return domain.UserResponse{}, err
 	}
 
-	_ = r.DB.Get(res, "Select (username, role) from users where username, role = $1, $2", user.Username, user.Role)
+	err = r.DB.Get(&res, "Select username, role from users where username = $1", user.Username)
+	if err != nil {
+		log.Println(err)
+	}
 
 	return res, nil
 

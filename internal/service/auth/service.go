@@ -36,6 +36,7 @@ func (s *service) RegisterUser(
 	resp, err = auth.RegisterUser(ctx, auth.NewRegisterRepository(s.st), req)
 	if err != nil {
 		log.Printf("auth.RegisterUser err: %v", err)
+		return reqresp.RegisterUserResponse{}, err
 	}
 
 	return resp, nil

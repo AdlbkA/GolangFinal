@@ -18,7 +18,7 @@ func (c *Connections) Close() {
 }
 
 func New(cfg *config.Config) (*Connections, error) {
-	db, err := sqlx.Connect("postgres", fmt.Sprintf("postgres://%s:%s@localhost:5432/%s?sslmode=%s", cfg.DB.User, cfg.DB.Password, cfg.DB.Database, cfg.DB.SSLMode))
+	db, err := sqlx.Connect("postgres", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", cfg.DB.User, cfg.DB.Password, cfg.DB.Host, cfg.DB.Port, cfg.DB.Database, cfg.DB.SSLMode))
 	if err != nil {
 		return nil, err
 	}

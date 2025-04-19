@@ -7,13 +7,14 @@ import (
 	"os"
 )
 
-var err = godotenv.Load(".env")
+var _ = godotenv.Load(".env")
 
 var secretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
-func CreateToken(username string) (string, error) {
+func CreateToken(username, role string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
+		"role":     role,
 	})
 
 	tokenString, err := token.SignedString(secretKey)
@@ -23,18 +24,22 @@ func CreateToken(username string) (string, error) {
 	return tokenString, nil
 }
 
-func VerifyToken(tokenString string) error {
+func VerifyToken(tokenString string) (interface{}, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !token.Valid {
-		return fmt.Errorf("invalid token")
+		return nil, fmt.Errorf("invalid token")
 	}
 
-	return nil
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims, nil
+	}
+
+	return nil, fmt.Errorf("couldn't validate token")
 }

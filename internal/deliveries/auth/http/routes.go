@@ -7,4 +7,5 @@ import (
 func Register(e *echo.Echo, h *Handler) {
 	e.POST("/register", h.Register)
 	e.POST("/login", h.Login)
+	e.POST("/verify", h.VerifyToken)
 }

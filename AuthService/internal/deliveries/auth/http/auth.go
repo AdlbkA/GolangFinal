@@ -37,7 +37,8 @@ func (h *Handler) Register(c echo.Context) error {
 		return nil
 	}
 
-	resp, err := h.srv.RegisterUser(ctx, reqresp.RegisterUserRequest{Username: jsonBody["username"].(string), Password: jsonBody["password"].(string), Role: jsonBody["role"].(string)})
+	resp, err := h.srv.
+		RegisterUser(ctx, reqresp.RegisterUserRequest{Username: jsonBody["username"].(string), Password: jsonBody["password"].(string), Role: jsonBody["role"].(string)})
 	if err != nil {
 		if err.Error() == "user already exists" {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{

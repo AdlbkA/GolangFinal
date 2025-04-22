@@ -7,6 +7,7 @@ type User struct {
 }
 
 type UserResponse struct {
+	Id       int    `json:"id" db:"id"`
 	Username string `json:"username" db:"username"`
 	Role     string `json:"role" db:"role"`
 }

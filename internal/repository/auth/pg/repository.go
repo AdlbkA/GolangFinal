@@ -39,7 +39,7 @@ func (r *repository) CreateUser(ctx context.Context, user domain.User) (domain.U
 		return domain.UserResponse{}, err
 	}
 
-	err = r.DB.Get(&res, "Select username, role from users where username = $1", user.Username)
+	err = r.DB.Get(&res, "Select id, username, role from users where username = $1", user.Username)
 	if err != nil {
 		log.Println(err)
 	}

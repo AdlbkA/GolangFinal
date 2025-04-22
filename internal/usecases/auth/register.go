@@ -19,7 +19,7 @@ func RegisterUser(ctx context.Context, repo RegisterRepository, req reqresp.Regi
 		return reqresp.RegisterUserResponse{}, err
 	}
 
-	token, err := auth.CreateToken(user.Username, user.Role)
+	token, err := auth.CreateToken(user.Id, user.Username, user.Role)
 	if err != nil {
 		return reqresp.RegisterUserResponse{}, err
 	}
@@ -32,7 +32,7 @@ func LoginUser(ctx context.Context, repo RegisterRepository, req reqresp.LoginUs
 	if err != nil {
 		return reqresp.LoginUserResponse{}, err
 	}
-	token, err := auth.CreateToken(user.Username, user.Role)
+	token, err := auth.CreateToken(user.Id, user.Username, user.Role)
 	if err != nil {
 		return reqresp.LoginUserResponse{}, err
 	}

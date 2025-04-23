@@ -5,6 +5,7 @@ import (
 	"blogging-service/internal/usecases/post"
 	"blogging-service/pkg/reqresp"
 	"context"
+	"log"
 )
 
 type Service interface {
@@ -26,6 +27,7 @@ func NewService(st *store.Store) (srv Service) {
 func (s *service) CreatePost(ctx context.Context, request reqresp.PostRequest) (reqresp.PostResponse, error) {
 	resp, err := post.CreatePost(ctx, post.NewPostRepository(s.st), request)
 	if err != nil {
+		log.Printf("post.CreatePost error: %v", err)
 		return reqresp.PostResponse{}, err
 	}
 
@@ -35,6 +37,7 @@ func (s *service) CreatePost(ctx context.Context, request reqresp.PostRequest) (
 func (s *service) UpdatePost(ctx context.Context, request reqresp.PostRequest) (reqresp.PostResponse, error) {
 	resp, err := post.UpdatePost(ctx, post.NewPostRepository(s.st), request)
 	if err != nil {
+		log.Printf("post.UpdatePost error: %v", err)
 		return reqresp.PostResponse{}, err
 	}
 
@@ -44,6 +47,7 @@ func (s *service) UpdatePost(ctx context.Context, request reqresp.PostRequest) (
 func (s *service) DeletePost(ctx context.Context, request reqresp.PostRequest) (reqresp.PostResponse, error) {
 	err := post.DeletePost(ctx, post.NewPostRepository(s.st), request.Id)
 	if err != nil {
+		log.Printf("post.DeletePost error: %v", err)
 		return reqresp.PostResponse{}, err
 	}
 

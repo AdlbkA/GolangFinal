@@ -1,17 +1,23 @@
-FROM golang:1.23-alpine
+# Stage 1 - Build the Go binary
+FROM golang:1.23.2 AS builder
 
 WORKDIR /app
-
 COPY go.mod go.sum ./
-
 RUN go mod download
 
 COPY . .
 
-RUN go build -o blogging ./
-RUN ls -l blogging
-RUN chmod +x blogging
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o BloggingService ./cmd/app/
 
-EXPOSE 8080
+# Stage 2 - Run the binary
+FROM alpine:latest
 
-CMD ["./blogging"]
+WORKDIR /app
+COPY --from=builder /app/BloggingService .
+COPY internal/app/config/.env internal/app/config/.env
+
+
+
+EXPOSE 8081
+
+CMD ["./BloggingService"]

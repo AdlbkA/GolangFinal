@@ -58,7 +58,8 @@ func (r *repository) UpdatePost(ctx context.Context, post domain.Post) (domain.P
 
 func (r *repository) GetPosts(ctx context.Context) ([]domain.PostResponse, error) {
 	var posts []domain.PostResponse
-	err := r.DB.Get(&posts, `SELECT (id, title, content, author_id) FROM posts`)
+
+	err := r.DB.Select(&posts, `SELECT id, title, content, author_id FROM posts`)
 	if err != nil {
 		return nil, err
 	}

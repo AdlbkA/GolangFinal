@@ -58,7 +58,7 @@ func (h *Handler) Create(c echo.Context) error {
 
 }
 
-func (h *Handler) Read(c echo.Context) error {
+func (h *Handler) Read(c echo.Context) (err error) {
 	ctx, cancel := h.context(c)
 	defer cancel()
 

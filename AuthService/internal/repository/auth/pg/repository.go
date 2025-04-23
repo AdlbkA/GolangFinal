@@ -28,18 +28,17 @@ func (r *repository) CreateUser(ctx context.Context, user domain.User) (domain.U
 
 	passwordBytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
-	_, err = r.DB.NamedExec(`INSERT INTO users (username, password, role) VALUES (:username, :hashedPassword, :role)`,
+	_, err = r.DB.NamedExec(`INSERT INTO users (username, password) VALUES (:username, :hashedPassword)`,
 		map[string]interface{}{
 			"username":       user.Username,
 			"hashedPassword": string(passwordBytes),
-			"role":           user.Role,
 		})
 	if err != nil {
 		log.Printf("Failed to add user: %v", err)
 		return domain.UserResponse{}, err
 	}
 
-	err = r.DB.Get(&res, "Select id, username, role from users where username = $1", user.Username)
+	err = r.DB.Get(&res, "Select id, username from users where username = $1", user.Username)
 	if err != nil {
 		log.Println(err)
 	}
@@ -50,7 +49,7 @@ func (r *repository) CreateUser(ctx context.Context, user domain.User) (domain.U
 
 func (r *repository) LoginUser(ctx context.Context, user domain.User) (domain.UserResponse, error) {
 	req := domain.User{}
-	err := r.DB.Get(&req, "Select username, password, role from users where username = $1", user.Username)
+	err := r.DB.Get(&req, "Select username, password from users where username = $1", user.Username)
 	if err != nil {
 		log.Println(err)
 	}
@@ -61,7 +60,7 @@ func (r *repository) LoginUser(ctx context.Context, user domain.User) (domain.Us
 		return domain.UserResponse{}, errors.New("invalid username or password")
 	}
 
-	res := domain.UserResponse{Username: req.Username, Role: req.Role}
+	res := domain.UserResponse{Username: req.Username}
 
 	return res, nil
 }

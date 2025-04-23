@@ -11,11 +11,10 @@ var _ = godotenv.Load(".env")
 
 var secretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
-func CreateToken(id int, username, role string) (string, error) {
+func CreateToken(id int, username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       id,
 		"username": username,
-		"role":     role,
 	})
 
 	tokenString, err := token.SignedString(secretKey)

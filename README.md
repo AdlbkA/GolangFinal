@@ -1,5 +1,20 @@
 # GolangFinal
 
+## Content
+- [Diagrams](#diagrams)
+- [How to run locally](#how-to-run-locally)
+- [Auth Service Endpoints](#api-endpoints-auth-service)
+- [Blogging Service Endpoints](#api-endpoints-blogging-service)
+
+## Diagrams
+ERD Diagram:
+![ERD](ERD.png)
+
+Sequence Diagram:
+
+![Sequence](Sequence_Diagram.png)
+
+
 ## How to run locally
 
 1. Create database in postgres with values:
